@@ -5,7 +5,6 @@ Logging configuration for opinions
 import datetime
 import logging.config
 
-from flask import current_app
 from pythonjsonlogger import jsonlogger
 import structlog
 

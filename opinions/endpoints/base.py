@@ -6,6 +6,7 @@ import uuid
 
 from flask import Blueprint
 from flask import current_app
+from flask import request
 from flask import render_template
 
 from opinions.core import logger
@@ -43,7 +44,7 @@ def health():
     return "ok"
 
 
-@Base.route('/json', methods=['GET'])
+@Base.route('/json', methods=['POST'])
 def json_encoder():
     """
     Sometimes it's useful to control the way in which JSON is serialized and
@@ -60,7 +61,15 @@ def json_encoder():
        'message': 'JSON Payload encoded with rapidjson',
        'version': '0.0.1'}
     """
+    log = logger.new(function="json_encoder", endpoint="/json", method='POST')
+
+    data = request.get_json()
     version = current_app.config.get("version")
+    # Arbitrary dict dumped out in log message
+    log.info("JSON received", version=version, **data)
+
+    # With our JSON encoder/decoder we can include Python objects and have our
+    # our encoder _automatically_ encode them: UUID, datetimes, etc.
     return jsonify({"status": "success",
                     "uuid_example": uuid.uuid4(),
                     "datetime_example": datetime.utcnow(),

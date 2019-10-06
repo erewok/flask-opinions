@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import os
+from typing import Dict, Optional
 
 from ecological import config as eco_config
 
@@ -8,14 +9,14 @@ from . import constants
 
 @dataclass
 class FileMountSecrets:
-    something_secret: str
+    something_secret: Optional[str]
 
 
 secret_keys = ("opinions-something-secret",)
 
 
-def get_secrets_from_file(secret_dir) -> FileMountSecrets:
-    dataset = {}
+def get_secrets_from_file(secret_dir: str) -> FileMountSecrets:
+    dataset: Dict[str, Optional[str]] = {}
     for key in secret_keys:
         secret_name = key.replace(
             "opinions-", "").replace("-", "_")
@@ -48,7 +49,7 @@ class Config(eco_config.Config, prefix="opinions"):
     REDIS_CONN_STR: str = ""
 
     def __init__(self):
-        if self.secrets_dir is not None:
+        if self.secrets_dir:
             # If there are secrets we need to look up
             self.set_secrets()
         self.REDIS_CONN_STR = f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"

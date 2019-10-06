@@ -10,4 +10,31 @@ filterwarnings =
   ignore::PendingDeprecationWarning
   ignore::FutureWarning
 
-addopts = --flake8 --cov=opinions --cov-report xml --cov-report html
+addopts = --flake8 --cov=opinions --cov-report xml --cov-report html --mypy
+
+[mypy-flask]
+ignore_missing_imports = True
+
+[mypy-rapidjson]
+ignore_missing_imports = True
+
+[mypy-ecological]
+ignore_missing_imports = True
+
+[mypy-pythonjsonlogger]
+ignore_missing_imports = True
+
+[mypy-structlog]
+ignore_missing_imports = True
+
+[mypy-pytest.*]
+ignore_missing_imports = True
+
+[mypy-werkzeug.*]
+ignore_missing_imports = True
+
+[mypy-setuptools]
+ignore_missing_imports = True
+
+[mypy-ipdb]
+ignore_missing_imports = True
