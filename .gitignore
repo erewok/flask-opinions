@@ -1,0 +1,11 @@
+__pycache__
+.pytest_cache
+*~
+.vscode/
+\#*\#
+*pyc
+*egg*
+.coverage
+htmlcov
+.DS_STORE
+.idea/
