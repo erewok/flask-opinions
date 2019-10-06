@@ -7,3 +7,4 @@
 - Testing Dockerfile
 - Kubernetes deployment manifest
 - Werkzeug profiling
+- Add Azure Devops Pipeline with multiple stages
