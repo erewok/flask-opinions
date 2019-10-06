@@ -10,15 +10,19 @@ from pythonjsonlogger import jsonlogger
 import structlog
 
 from . import constants
+from . import config
 
 
 def add_app_name_and_vers(logger, log_method, event_dict):
-    event_dict["application"] = current_app.config.get("app_name")
-    event_dict["version"] = current_app.config.get("version")
+    conf = config.Config()
+    event_dict["application"] = conf.app_name
+    event_dict["version"] = conf.version
     return event_dict
 
 
 class JsonLogFormatter(jsonlogger.JsonFormatter):  # pragma: no cover
+    conf = config.Config()
+
     def add_fields(self, log_record, record, message_dict):
         """
         This method allows us to inject custom data into resulting log messages
@@ -31,9 +35,9 @@ class JsonLogFormatter(jsonlogger.JsonFormatter):  # pragma: no cover
         if "timestamp" not in log_record:
             log_record["timestamp"] = datetime.datetime.utcnow().isoformat()
         if "application" not in log_record:
-            log_record["application"] = current_app.config.get("app_name")
+            log_record["application"] = self.conf.app_name
         if "version" not in log_record:
-            log_record["version"] = current_app.config.get("version")
+            log_record["version"] = self.conf.version
 
         jsonlogger.merge_record_extra(
             record, log_record, reserved=self._skip_fields)
