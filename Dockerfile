@@ -4,7 +4,7 @@ ENV APP_DIR /app
 EXPOSE 8007
 
 # app dir and user
-RUN apk add --no-cache build-base bash git py3-pip python3-dev \
+RUN apk add --no-cache build-base bash git py3-pip openssl-dev libffi-dev python3-dev \
     && pip3 install --upgrade pip \
     && addgroup -S opinions_user \
     && adduser -S -G opinions_user opinions_user \
