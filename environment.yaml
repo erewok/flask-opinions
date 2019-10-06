@@ -4,20 +4,21 @@ channels:
 dependencies:
   - cryptography=2.7
   - flask=1.1.1
-  - pip=19.0.1
-  - python=3.7.2
-  - python-dateutil=2.7.5
-  - pyyaml=3.13
-  - requests=2.21.0
-  - werkzeug=0.16.1
-  - yaml=0.1.7
+  - jinja2=2.10.1
+  - pip=19.2.3
+  - python=3.7.4
+  - pyyaml=5.1.2
+  - requests=2.22.0
+  - urllib3=1.24.2
+  - werkzeug=0.16.0
   - pip:
+    - dataclasses==0.6
     - ecological==2.0.0
-    - flask-wtf==0.14.2
     - gunicorn==19.9.0
-    - mypy==0.720
-    - mypy-extensions==0.4.1
+    - mypy==0.730
+    - mypy-extensions==0.4.2
     - python-json-logger==0.1.11
-    - redis==3.2.1
+    - redis==3.3.8
     - structlog==19.1.0
-    - wtforms==2.2.1
+    - typed-ast==1.4.0
+    - typing-extensions==3.7.4

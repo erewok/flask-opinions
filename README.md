@@ -2,6 +2,8 @@
 
 This application represents a collection of best practices and opinions cultivated over 5 years of working with Flask.
 
+Note: this project was built with Python 3.7 (and it liberally uses F-strings).
+
 This project includes the following features:
 
 - Configuration management from environment variables and secret files using the [ecological](https://github.com/jmcs/ecological) package.

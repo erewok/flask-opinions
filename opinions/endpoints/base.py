@@ -5,7 +5,6 @@ from flask import Blueprint
 from flask import current_app
 from flask import render_template
 
-from opinions import http
 from opinions.core import logger
 
 
@@ -31,6 +30,6 @@ def index():
 @Base.route('/health', methods=['GET'])
 def health():
     version = current_app.config.get("version")
-    return {"status": http.Success.status,
+    return {"status": "success",
             "message": "Healthy",
             "version": version}

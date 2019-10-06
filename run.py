@@ -14,7 +14,7 @@ You can also use this module to run a version of this project locally
 
 from werkzeug.serving import run_simple
 
-from opinion import core
+from opinions import core
 
 
 app = core.create_app("opinions")
