@@ -9,14 +9,15 @@ This project includes the following features:
 - Configuration management from environment variables and secret files using the [ecological](https://github.com/jmcs/ecological) package.
 - Opinionated logging set-up with ability to log arbitrary kwargs using [structlog](http://www.structlog.org/en/stable/) with colored output for local
   development and JSON output to stdout in production.
-  - A Dockerfile for running this in production (many projects like this are running on Kubernetes clusters).
-  - A custom JSON encoder and decoder using [rapidjson](https://github.com/python-rapidjson/python-rapidjson).
-  - Pytest testing with a basic conftest, flake8, coverage, and mypy.
-  - Optional conda `environment.yaml` for creating a virtual environment with conda.
+- A Dockerfile for running this in production (many projects like this are running on Kubernetes clusters).
+- A custom JSON encoder and decoder using [rapidjson](https://github.com/python-rapidjson/python-rapidjson).
+- Pytest testing with a basic conftest, flake8, coverage, and mypy.
+- Optional conda `environment.yaml` for creating a virtual environment with conda.
 
 
 ## Quick Start
 
+Follow the instructions below to create an environment and run this project locally.
 
 ### Dependencies and Environment
 
@@ -27,14 +28,8 @@ Using conda, you can create a virtual environment and install depdendencies:
 ...
 ```
 
-You should also install the testing-requirements and the project itself, which makes path resolution in testing a bit simpler:
-
-```sh
-❯ pip install -r testing-requirements.txt
-
-❯ pip install -e .
-
-```
+A `requirements.txt` file has also been provided for those who want to use another virtual environment tool (such as pyenv,
+pipenv, etc).
 
 ### Environment Variables and Secrets
 
@@ -53,16 +48,7 @@ You can also set the `OPINIONS_ENVIRONMENT` variable to trigger different behavi
 
 For instance, when the `environment` variable is set to `"local"`, the log output will have colors:
 
-```sh
-❯ export OPINIONS_ENVIRONMENT=local
-
-❯ python run.py
-2019/10/06 01:34:11 [info     ] OPINIONS API started           application=opinions environment=local version=0.0.1
- * Running on http://localhost:8000/ (Press CTRL+C to quit)
- * Restarting with stat
-2019/10/06 01:34:11 [info     ] OPINIONS API started           application=opinions environment=local version=0.0.1
-2019/10/06 01:34:24 [info     ] Get index                      application=opinions endpoint=/ function=index method=GET version=0.0.1
-```
+![Run.py Output Local](/docs/local_runpy_output.png)
 
 However, when the `environment` variable is set to anything *other than* `"local"`, the log output will be JSON:
 
@@ -78,10 +64,10 @@ However, when the `environment` variable is set to anything *other than* `"local
 {"message": "127.0.0.1 - - [05/Oct/2019 18:52:11] \"GET /json HTTP/1.1\" 200 -", "timestamp": "2019-10-06T01:52:11.180039", "application": "opinions", "version": "0.0.1"}
 ```
 
-Interestingly, you can use `jq` or other tools to parse these log outputs, but they're meant to go _directly_ into a
-data store such as Elasticsearch.
+Interestingly, you can use `jq` or other tools to parse these log outputs, but the reason for JSON is to facilitate
+sending all logs _directly_ into a data store such as Elasticsearch.
 
-Finally, once you have the project running, you can open it in a browser at
+Once you have the project running, you can open it in a browser at
 [http://localhost:8000/](http://localhost:8000/)
 
 ### Profiling
@@ -110,16 +96,28 @@ PATH: '/json'
 ```
 
 
-## Tests and Local Development
+## Running Tests
 
-Make sure you have all testing requirements installed:
+
+You should also install the testing-requirements and the project itself, which makes path resolution in testing a bit simpler:
 
 ```sh
-$ conda activate opinions
-(opinions) $ pip install -r testing-requirements.txt
-(opinions) $ pip install -e .
-(opinions) $ pytest
+❯ conda activate opinions
+
+(opinions) ❯ pip install -r testing-requirements.txt
+
+(opinions) ❯ pip install -e .
+
+(opinions) ❯ pytest
+
 ```
+
+The tests are configured by `setup.cfg`, which instructs pytest to do the following:
+
+- Collect and display code coverage in html form (see `htmlcov` directory after running the tests)
+- Run flake8
+- Run mypy (not implemented yet).
+
 
 ## Deployment
 
@@ -133,5 +131,7 @@ $ docker run --rm -e OPINIONS_SECRETS_DIR=/secrets -v `pwd`:/secrets -p 8000:800
 {"message": null, "environment": "dev", "event": "OPINIONS API started", "application": "opinions", "version": "0.0.1", "level": "info", "timestamp": "2019/10/06 03:53:36"}
 {"message": null, "environment": "dev", "event": "OPINIONS API started", "application": "opinions", "version": "0.0.1", "level": "info", "timestamp": "2019/10/06 03:53:36"}
 {"message": null, "environment": "dev", "event": "OPINIONS API started", "application": "opinions", "version": "0.0.1", "level": "info", "timestamp": "2019/10/06 03:53:36"}
-{"message": null, "function": "index", "endpoint": "/", "method": "GET", "version": "0.0.1", "event": "Get index", "application": "opinions", "level": "info", "timestamp": "2019/10/06 03:53:43"} docker run --rm -p 8000:8000 opinions:latest
+{"message": null, "function": "index", "endpoint": "/", "method": "GET", "version": "0.0.1", "event": "Get index", "application": "opinions", "level": "info", "timestamp": "2019/10/06 03:53:43"}
 ```
+
+In addition, the project has a Kubernetes manifest (not implemented yet) for running it on a Kubernetes cluster.
