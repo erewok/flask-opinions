@@ -1,18 +1,49 @@
 """
 Pytest Conftest.py: configure testing environment
 """
+import os
 from unittest import mock
 
 import pytest
 
 from opinions import core
-from opinions.config import Config
+from opinions import config as proj_config
+
+
+test_dir = os.path.dirname(__file__)
+fixtures = os.path.join(test_dir, "fixtures")
 
 
 @pytest.fixture(scope="session", autouse=True)
-def config():
-    class TestConfig(Config):
-        pass
+def make_secrets():
+    secrets = {}
+
+    for idx, secret_file in enumerate(proj_config.secret_keys):
+        value = f"SECRET_{secret_file}_{idx}"
+        secrets[secret_file] = value
+        with open(os.path.join(fixtures, secret_file), "w") as fl:
+            fl.write(value)
+    return secrets
+
+
+@pytest.fixture(scope="session", autouse=True)
+def config(make_secrets):
+    class TestConfig(proj_config.Config):
+        is_debug: bool = False
+        version: str = "0.0.1-test"
+        environment: str = "testing!"
+        app_name: str = "testing-opinions"
+
+        # redis connection
+        redis_host: str = ""
+        redis_port: str = ""
+        redis_db: str = "0"
+
+        # secrets should go in secrets_dir
+        secrets_dir: str = ""
+        redis_passwd: str = "SECRET!"
+        something_secret: str = "SECRET!"
+        REDIS_CONN_STR = ""
 
     return TestConfig
 
@@ -57,3 +88,8 @@ def mocklog(monkeypatch):
     mockl = mock.Mock()
     monkeypatch.setattr(core.logger, "new", mockler)
     return mockl
+
+
+@pytest.fixture
+def json_ct():
+    return {"Content-Type": "application/json"}

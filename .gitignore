@@ -10,3 +10,4 @@ htmlcov
 .DS_STORE
 .idea/
 *secret*
+.mypy_cache/

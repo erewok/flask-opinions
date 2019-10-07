@@ -31,6 +31,9 @@ Using conda, you can create a virtual environment and install depdendencies:
 A `requirements.txt` file has also been provided for those who want to use another virtual environment tool (such as pyenv,
 pipenv, etc).
 
+Further, the `requirements.txt` dependency list is used for building a Docker image, because the equivalent Miniconda
+images are large (2GB+) and somewhat unwieldy (activating and running projects takes more effort).
+
 ### Environment Variables and Secrets
 
 This project demonstrates two different ways to retrieve secrets: from environment variables and from files.
@@ -135,3 +138,60 @@ $ docker run --rm -e OPINIONS_SECRETS_DIR=/secrets -v `pwd`:/secrets -p 8000:800
 ```
 
 In addition, the project has a Kubernetes manifest (not implemented yet) for running it on a Kubernetes cluster.
+
+### Continuous Integration
+
+In order to simplify the requirements for our infrastructure team, we have standardized on using Docker containers to
+run tests.
+
+This makes our testing infrastructure _consistent_ with our deployment infrastructure (same environment variables are
+required, for instance).
+
+To build the testing dockerfile, run the following:
+
+```sh
+❯ docker build -f deployment/Dockerfile.test -t opinions:testing .
+Sending build context to Docker daemon  8.136MB
+Step 1/19 : FROM alpine:3.10.1
+...
+Successfully built 3cf99fdc05d3
+Successfully tagged opinions:testing
+```
+
+Next, you can run it as follows:
+
+```sh
+❯ docker run --rm opinions:testing
+============================= test session starts ==============================
+platform linux -- Python 3.7.4, pytest-5.2.0, py-1.8.0, pluggy-0.13.0
+rootdir: /app, inifile: setup.cfg
+plugins: flask-0.15.0, flake8-1.0.4, cov-2.8.1, mypy-0.4.1
+collected 26 items
+
+Running mypy on 12 files... done with status 0
+Success: no issues found in 12 source files
+
+run.py ..                                                                [  7%]
+setup.py ..                                                              [ 15%]
+opinions/__init__.py ..                                                  [ 23%]
+opinions/config.py ..                                                    [ 30%]
+opinions/constants.py ..                                                 [ 38%]
+opinions/core.py ..                                                      [ 46%]
+opinions/json_encoding.py ..                                             [ 53%]
+opinions/loggers.py ..                                                   [ 61%]
+opinions/endpoints/__init__.py ..                                        [ 69%]
+opinions/endpoints/base.py ..                                            [ 76%]
+test/conftest.py ..                                                      [ 84%]
+test/integration/test_endpoints/test_base.py ....                        [100%]
+
+----------- coverage: platform linux, python 3.7.4-final-0 -----------
+Coverage HTML written to dir htmlcov
+Coverage XML written to file /app/htmlcov/coverage.xml
+
+
+============================= 26 passed in 13.09s ==============================
+```
+
+### Azure DevOps Pipeline
+
+-- To Do ---
