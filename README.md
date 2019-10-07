@@ -144,7 +144,7 @@ In addition, the project has a Kubernetes manifest (not implemented yet) for run
 In order to simplify the requirements for our infrastructure team, we have standardized on using Docker containers to
 run tests.
 
-This makes our testing infrarstructure _consistent_ with our deployment infrastructure (same environment variables are
+This makes our testing infrastructure _consistent_ with our deployment infrastructure (same environment variables are
 required, for instance).
 
 To build the testing dockerfile, run the following:
