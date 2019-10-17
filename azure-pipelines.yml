@@ -1,0 +1,62 @@
+# flask-open pipeline: includes PR and master pipeline
+# Tests and coverage run for all pipelines
+# build and push PR image runs for PRs (to implement)
+# build and push Release image runs for master (to implement)
+# Release to kubernetes runs for masters (to implement)
+trigger:
+  branches:
+    include:
+      - "*"
+
+name: "$(date:yyyyMMdd)$(rev:.r)"
+
+stages:
+  - stage: runTests
+    displayName: "Run Project Tests"
+    jobs:
+      - job: testRunner1
+        pool:
+          vmImage: "ubuntu-latest"
+        displayName: "Running Tests"
+        condition: or(eq(variables['Build.SourceBranchName'], 'master'), eq(variables['Build.Reason'], 'PullRequest'))
+        steps:
+          - bash: |
+              set -euxo pipefail
+              mkdir coverage
+              chmod -R a+rwx coverage
+            displayName: "Make coverage dir"
+
+          - bash: |
+              set -euxo pipefail
+              ls -la .
+              whoami
+              # Build docker testing image
+              docker build -f deployment/Dockerfile.test -t opinions:testing .
+
+              # Run docker testing image
+              docker run --rm -e OPINIONS_SECRETS_DIR=/tmp -v $(pwd)/coverage:/app/htmlcov opinions:testing
+            displayName: "Build and Run Test Image"
+            condition: succeeded()
+
+          - task: PublishCodeCoverageResults@1
+            displayName: "Publish project code coverage"
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "./coverage/coverage.xml"
+              reportDirectory: "./coverage"
+            condition: succeeded()
+
+  - stage: buildPushPrImage
+    displayName: "Build and Push Pull Request Image"
+    dependsOn: runTests
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - job: prImagePushBuild
+        displayName: "Building PR Image for Dev Release"
+        pool:
+          vmImage: "ubuntu-latest"
+        variables:
+          prImage: "$(Build.Repository.Name)-dev:$(Build.SourceBranchName)-PR$(System.PullRequest.PullRequestId)"
+        steps:
+          - bash: |
+              echo "To Do..."
