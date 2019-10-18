@@ -120,6 +120,7 @@ The tests are configured by `setup.cfg`, which instructs pytest to do the follow
 - Collect and display code coverage in html form (see `htmlcov` directory after running the tests)
 - Run flake8
 - Run mypy.
+- Fail the test run if coverage is lower than 80%.
 
 
 ## Deployment
