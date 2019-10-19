@@ -20,7 +20,14 @@ def add_app_name_and_vers(logger, log_method, event_dict):
 
 
 class JsonLogFormatter(jsonlogger.JsonFormatter):  # pragma: no cover
-    conf = config.Config()
+
+    _conf = None
+
+    @property
+    def conf(self):
+        if self._conf is None:
+            self._conf = config.Config()
+        return self._conf
 
     def add_fields(self, log_record, record, message_dict):
         """

@@ -13,11 +13,14 @@ logger = loggers.FlaskLogger()   # noqa
 
 
 def create_app(package_name,
-               conf=config.Config(),
+               conf=None,
                use_log_handlers="gunicorn.info",
                start_msg=f"{constants.APPLICATION_NAME} API started",
                settings_override=None):
     """Flask App `create_app` pattern for arbitrary Flask Apps"""
+    if conf is None:
+        conf = config.Config()
+
     app = Flask(package_name, instance_relative_config=True)
 
     app.config.from_object(conf)

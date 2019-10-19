@@ -64,6 +64,7 @@ def json_encoder():
     log = logger.new(function="json_encoder", endpoint="/json", method='POST')
 
     data = request.get_json()
+    data = data if data else {}
     version = current_app.config.get("version")
     # Arbitrary dict dumped out in log message
     log.info("JSON received", version=version, **data)
