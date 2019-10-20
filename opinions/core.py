@@ -9,14 +9,16 @@ from . import config
 from . import constants
 from . import loggers
 
-logger = loggers.FlaskLogger()   # noqa
+logger = loggers.FlaskLogger()  # noqa
 
 
-def create_app(package_name,
-               conf=None,
-               use_log_handlers="gunicorn.info",
-               start_msg=f"{constants.APPLICATION_NAME} API started",
-               settings_override=None):
+def create_app(
+    package_name,
+    conf=None,
+    use_log_handlers="gunicorn.info",
+    start_msg=f"{constants.APPLICATION_NAME} API started",
+    settings_override=None,
+):
     """Flask App `create_app` pattern for arbitrary Flask Apps"""
     if conf is None:
         conf = config.Config()
@@ -47,6 +49,7 @@ def create_app(package_name,
 
     # Register blueprints (avoiding standard Flask circular imports...)
     from .endpoints import base
+
     app.register_blueprint(base.Base)
 
     return app

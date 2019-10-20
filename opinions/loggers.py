@@ -45,8 +45,7 @@ class JsonLogFormatter(jsonlogger.JsonFormatter):  # pragma: no cover
         if "version" not in log_record:
             log_record["version"] = self.conf.version
 
-        jsonlogger.merge_record_extra(
-            record, log_record, reserved=self._skip_fields)
+        jsonlogger.merge_record_extra(record, log_record, reserved=self._skip_fields)
 
 
 def get_logger(conf):
@@ -54,59 +53,55 @@ def get_logger(conf):
     # For other environments, we write out JSON logs.
     # We maintain two separate logfiles: INFO and ERROR.
     if conf.is_debug:
-        logging.config.dictConfig({
-            "version": 1,
-            "disable_existing_loggers": True,
-            "formatters": {
-                "colors": {
-                    "()": structlog.stdlib.ProcessorFormatter,
-                    "processor": structlog.dev.ConsoleRenderer(colors=True),
-                }
-            },
-            "handlers": {
-                "default": {
-                    "level": "INFO",
-                    "class": "logging.StreamHandler",
-                    "formatter": "colors",
-                }
-            },
-            "loggers": {
-                "": {
-                    "handlers": ["default"],
-                    "level": "INFO",
-                    "propagate": True,
-                }
-            }
-        })
-    else:
-        logging.config.dictConfig({
-            "version": 1,
-            "disable_existing_loggers": True,
-            "formatters": {
-                "json": {
-                    "class": "opinions.loggers.JsonLogFormatter"
-                }
-            },
-            "handlers": {
-                "info": {
-                    "level": "INFO",
-                    "class": "logging.StreamHandler",
-                    "formatter": "json"
+        logging.config.dictConfig(
+            {
+                "version": 1,
+                "disable_existing_loggers": True,
+                "formatters": {
+                    "colors": {
+                        "()": structlog.stdlib.ProcessorFormatter,
+                        "processor": structlog.dev.ConsoleRenderer(colors=True),
+                    }
                 },
-                "error": {
-                    "level": "ERROR",
-                    "class": "logging.StreamHandler",
-                    "formatter": "json"
-                }
-            },
-            "loggers": {
-                "": {
-                    "handlers": ["info", "error"],
-                    "level": "INFO",
-                    "propagate": True,
-                }
+                "handlers": {
+                    "default": {
+                        "level": "INFO",
+                        "class": "logging.StreamHandler",
+                        "formatter": "colors",
+                    }
+                },
+                "loggers": {
+                    "": {"handlers": ["default"], "level": "INFO", "propagate": True}
+                },
             }
-        })
+        )
+    else:
+        logging.config.dictConfig(
+            {
+                "version": 1,
+                "disable_existing_loggers": True,
+                "formatters": {"json": {"class": "opinions.loggers.JsonLogFormatter"}},
+                "handlers": {
+                    "info": {
+                        "level": "INFO",
+                        "class": "logging.StreamHandler",
+                        "formatter": "json",
+                    },
+                    "error": {
+                        "level": "ERROR",
+                        "class": "logging.StreamHandler",
+                        "formatter": "json",
+                    },
+                },
+                "loggers": {
+                    "": {
+                        "handlers": ["info", "error"],
+                        "level": "INFO",
+                        "propagate": True,
+                    }
+                },
+            }
+        )
     structlog.configure(
         processors=[
             partial(add_app_name_and_vers, conf),

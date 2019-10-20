@@ -12,14 +12,16 @@ class CustomJSONEncoder(JSONEncoder):
         sort_keys=False,
         number_mode=rapidjson.NM_NATIVE,
         datetime_mode=rapidjson.DM_ISO8601,
-        uuid_mode=rapidjson.UM_CANONICAL)
+        uuid_mode=rapidjson.UM_CANONICAL,
+    )
 
 
 class CustomJSONDecoder(JSONDecoder):
     decode = rapidjson.Decoder(
         number_mode=rapidjson.NM_NATIVE,
         datetime_mode=rapidjson.DM_ISO8601,
-        uuid_mode=rapidjson.UM_CANONICAL)
+        uuid_mode=rapidjson.UM_CANONICAL,
+    )
 
 
 def jsonify(json_obj):

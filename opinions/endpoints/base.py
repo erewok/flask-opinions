@@ -14,29 +14,28 @@ from opinions.json_encoding import jsonify
 
 
 Base = Blueprint(
-    'Base',
+    "Base",
     __name__,
-    static_folder='static',
-    static_url_path='/static/',
-    template_folder='templates')
+    static_folder="static",
+    static_url_path="/static/",
+    template_folder="templates",
+)
 
 
-@Base.route('/', methods=['GET'])
+@Base.route("/", methods=["GET"])
 def index():
     """
     Basic index with a template rendered, a log message,
     and a value retrieved from config.
     """
-    log = logger.new(function="index", endpoint="/", method='GET')
+    log = logger.new(function="index", endpoint="/", method="GET")
     version = current_app.config.get("version")
     # Structlog allows arbitrary kwargs in log output
     log.info("Get index", version=version)
-    return render_template(
-        'index.html',
-        version=version)
+    return render_template("index.html", version=version)
 
 
-@Base.route('/health', methods=['GET'])
+@Base.route("/health", methods=["GET"])
 def health():
     """
     We will need a health endpoint for our load balancers to make sure this app is alive.
@@ -44,7 +43,7 @@ def health():
     return "ok"
 
 
-@Base.route('/json', methods=['POST'])
+@Base.route("/json", methods=["POST"])
 def json_encoder():
     """
     Sometimes it's useful to control the way in which JSON is serialized and
@@ -61,7 +60,7 @@ def json_encoder():
        'message': 'JSON Payload encoded with rapidjson',
        'version': '0.0.1'}
     """
-    log = logger.new(function="json_encoder", endpoint="/json", method='POST')
+    log = logger.new(function="json_encoder", endpoint="/json", method="POST")
 
     data = request.get_json()
     data = data if data else {}
@@ -71,8 +70,12 @@ def json_encoder():
 
     # With our JSON encoder/decoder we can include Python objects and have our
     # our encoder _automatically_ encode them: UUID, datetimes, etc.
-    return jsonify({"status": "success",
-                    "uuid_example": uuid.uuid4(),
-                    "datetime_example": datetime.utcnow(),
-                    "message": "JSON Payload encoded with rapidjson",
-                    "version": version})
+    return jsonify(
+        {
+            "status": "success",
+            "uuid_example": uuid.uuid4(),
+            "datetime_example": datetime.utcnow(),
+            "message": "JSON Payload encoded with rapidjson",
+            "version": version,
+        }
+    )
