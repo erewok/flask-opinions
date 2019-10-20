@@ -3,6 +3,7 @@ Logging configuration for opinions
 
 """
 import datetime
+from functools import partial
 import logging.config
 
 from pythonjsonlogger import jsonlogger
@@ -12,8 +13,7 @@ from . import constants
 from . import config
 
 
-def add_app_name_and_vers(logger, log_method, event_dict):
-    conf = config.Config()
+def add_app_name_and_vers(conf, logger, log_method, event_dict):
     event_dict["application"] = conf.app_name
     event_dict["version"] = conf.version
     return event_dict
@@ -49,11 +49,11 @@ class JsonLogFormatter(jsonlogger.JsonFormatter):  # pragma: no cover
             record, log_record, reserved=self._skip_fields)
 
 
-def get_logger(debug=False):
+def get_logger(conf):
     # For local environments we print to the screen using some colored output.
     # For other environments, we write out JSON logs.
     # We maintain two separate logfiles: INFO and ERROR.
-    if debug:
+    if conf.is_debug:
         logging.config.dictConfig({
             "version": 1,
             "disable_existing_loggers": True,
@@ -109,7 +109,7 @@ def get_logger(debug=False):
         })
     structlog.configure(
         processors=[
-            add_app_name_and_vers,
+            partial(add_app_name_and_vers, conf),
             structlog.stdlib.add_log_level,
             structlog.processors.TimeStamper(fmt=constants.LOGGING_TS_FORMAT),
             structlog.stdlib.PositionalArgumentsFormatter(),
@@ -137,8 +137,8 @@ class FlaskLogger:
         if config is not None:
             self.init_app(config, **kwargs)
 
-    def init_app(self, is_debug, **kwargs):
-        self._logger = get_logger(debug=is_debug)
+    def init_app(self, conf):
+        self._logger = get_logger(conf)
 
     def __getattr__(self, item):
         return getattr(self._logger, item)

@@ -35,7 +35,7 @@ def create_app(package_name,
     # Inits various libraries
 
     # others
-    logger.init_app(conf.is_debug)
+    logger.init_app(conf)
 
     # Configure logging
     if use_log_handlers is not None:
