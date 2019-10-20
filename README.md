@@ -1,5 +1,7 @@
 # Flask Opinions
 
+[![Build Status](https://dev.azure.com/eraker/erewok/_apis/build/status/erewok.flask-opinions?branchName=master)](https://dev.azure.com/eraker/erewok/_build/latest?definitionId=1&branchName=master)
+
 This application represents a collection of best practices and opinions cultivated over 5 years of working with Flask.
 
 Note: this project was built with Python 3.7 (and it liberally uses F-strings).
@@ -21,7 +23,7 @@ Follow the instructions below to create an environment and run this project loca
 
 ### Dependencies and Environment
 
-Using conda, you can create a virtual environment and install depdendencies:
+Using conda, you can create a virtual environment and install dependencies:
 
 ```sh
 ❯ conda env create -f environment.yaml
@@ -120,6 +122,7 @@ The tests are configured by `setup.cfg`, which instructs pytest to do the follow
 - Collect and display code coverage in html form (see `htmlcov` directory after running the tests)
 - Run flake8
 - Run mypy.
+- Fail the test run if coverage is lower than 80%.
 
 
 ## Deployment
@@ -194,4 +197,20 @@ Coverage XML written to file /app/htmlcov/coverage.xml
 
 ### Azure DevOps Pipeline
 
--- To Do ---
+This project includes a sample Azure Devops Pipeline (see `azure-pipelines.yml`).
+
+This pipeline utilizes the recent "Multi-stage pipelines" feature of Azure Devops Pipelines.
+
+To take advantage of this feature, which is still in preview, you need to navigate to your Azure Devops project, click on your user icon, and select the settings menu. There, under "Preview Features", you can enable "multi-stage pipelines."
+
+Note the conditions used to trigger a particular stage:
+
+``` yaml
+        condition: or(eq(variables['Build.SourceBranchName'], 'master'), eq(variables['Build.Reason'], 'PullRequest'))
+```
+
+In this case, we trigger a test build _for changes on any branches_, but we may build a PR image by simply triggering off a pull request. By contrast, when a push goes to Master, we'll trigger a build which includes a test run and may build a production docker image.
+
+In production deployments, we have included stages to build docker images and push them into repositories, after which we update Kubernetes manifests and deploy these images into production.
+
+Lastly, note that separate jobs in the pipeline can actually be run in parallel (but multiple parallel workers cost $40/month per worker).

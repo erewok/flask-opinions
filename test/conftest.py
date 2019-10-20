@@ -26,6 +26,16 @@ def make_secrets():
     return secrets
 
 
+@pytest.fixture(autouse=True, scope="session")
+def clobber_secrets_dir():
+    old_dir = os.getenv("OPINIONS_SECRETS_DIR")
+    os.environ["OPINIONS_SECRETS_DIR"] = fixtures
+    yield
+    if old_dir is None:
+        old_dir = ""
+    os.environ["OPINIONS_SECRETS_DIR"] = old_dir
+
+
 @pytest.fixture(scope="session", autouse=True)
 def config(make_secrets):
     class TestConfig(proj_config.Config):
@@ -45,7 +55,7 @@ def config(make_secrets):
         something_secret: str = "SECRET!"
         REDIS_CONN_STR = ""
 
-    return TestConfig
+    return TestConfig()
 
 
 @pytest.fixture(scope='session', autouse=True)

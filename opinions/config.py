@@ -18,8 +18,7 @@ secret_keys = ("opinions-something-secret",)
 def get_secrets_from_file(secret_dir: str) -> FileMountSecrets:
     dataset: Dict[str, Optional[str]] = {}
     for key in secret_keys:
-        secret_name = key.replace(
-            "opinions-", "").replace("-", "_")
+        secret_name = key.replace("opinions-", "").replace("-", "_")
         try:
             with open(os.path.join(secret_dir, key), "r") as fl:
                 dataset[secret_name] = fl.read().strip()
@@ -52,10 +51,14 @@ class Config(eco_config.Config, prefix="opinions"):
         if self.secrets_dir:
             # If there are secrets we need to look up
             self.set_secrets()
-        self.REDIS_CONN_STR = f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+        self.REDIS_CONN_STR = (
+            f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+        )
         if self.redis_passwd:
-            self.REDIS_CONN_STR = (f"redis://:{self.redis_passwd}@"
-                                   f"{self.redis_host}:{self.redis_port}/{self.redis_db}")
+            self.REDIS_CONN_STR = (
+                f"redis://:{self.redis_passwd}@"
+                f"{self.redis_host}:{self.redis_port}/{self.redis_db}"
+            )
 
         if self.environment == constants.LOCAL:
             self.is_debug = True
@@ -67,6 +70,5 @@ class Config(eco_config.Config, prefix="opinions"):
         for attrname in filter(lambda it: not it.startswith("__"), dir(fm_secrets)):
             attr_value = getattr(fm_secrets, attrname)
             if attr_value is None:
-                raise AttributeError(
-                    f"Configuration error: {attrname} is not set.")
+                raise AttributeError(f"Configuration error: {attrname} is not set.")
             setattr(cls, attrname, attr_value)

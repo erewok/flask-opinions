@@ -10,7 +10,7 @@ filterwarnings =
   ignore::PendingDeprecationWarning
   ignore::FutureWarning
 
-addopts = --flake8 --cov=opinions --cov-report xml --cov-report html --mypy
+addopts = --flake8 --cov-fail-under 80 --cov=opinions --cov-report xml --cov-report html --mypy
 
 [mypy-flask]
 ignore_missing_imports = True
