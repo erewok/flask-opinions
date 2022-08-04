@@ -7,7 +7,7 @@ Jinja2==2.11.3
 mypy==0.730
 mypy-extensions==0.4.2
 python-json-logger==0.1.11
-PyYAML==5.1.2
+PyYAML==5.4
 python-rapidjson==0.8.0
 redis==3.3.8
 requests==2.22.0
